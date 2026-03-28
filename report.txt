@@ -1,0 +1,47 @@
+# Word Search assignment report
+
+[Replace the square-bracketed text with your own text. *Leave everything else unchanged.* 
+Note, the reports are parsed to check word limits, etc. Changing the format may cause 
+the parsing to fail.]
+
+## Feature Extraction (Max 200 Words)
+
+[I designed the feature extraction function to create an informative and concise 20-dimensional feature vector for the classification stage. Firstly, each image is centred and cropped which removes and unnecessary background pixels. Then the image is converted into a high dimensional vector based on their pixel intensities, by doing this I can preserve the shape and the structure of the letter.
+
+Since using raw pixels directly leads to problems cause by dimensionality, such as unreliable distances and the computation cost increasing. To address this, I implemented PCA as an unsupervised linear transformation. I chose PCA because it reduces dimensionality whilst preserving the most important variation in data., without using class labels which avoids bias at the feature extraction stage.
+
+I then centred the training data to remove bias, computed the covariance matrix to find key relationships between features. I then used decomposition to find the direction which data changes the most across all the training samples. The eigenvectors were ordered by importance, and the top components were selected to capture the most variance. I also made use that the training and test data were projected by the same transformation which makes sure the classification will be fair and consistent.]
+
+## Letter Classifier (Max 200 Words)
+
+[I designed the letter classification stage using KNN to classify letters using the PCA reduced feature vectors. I chose KNN because it is simple, and straightforward to implements, whilst still being effective. It also supports multi class classification, which is essential for recognising different letters.
+
+The classifier is supervised because it uses a labelled training dataset. Instead of learning complex model parameters during training, the system scores the reduced PCA training feature vectors with their corresponding levels. This makes KNN. Lazy learning algorithm, since there is effectively no training stage. When a new letter gets classified, it is compared to the examples store using the Euclidean distance, this works well because PCA ensures all feature vectors are represented in the same reduced space.
+
+To classify each letter, the distance to all training samples is calculated and the K nearest neighbours are selected. The predicted label is chosen using majority voting, which improves robustness to noise. I use a value of K = 15, as this provides a good balance between stability and discrimination. A larger K produces a smoother decision boundary and more reliable predictions, which is important for accurate letter recognition since it's crucial for the word search stage]
+
+## Word Finder (Max 200 Words)
+
+[I designed to the word finishing stage to find words in the grid of letters produced the classification stage. The approach should systematically search for each targeted word in all eight possible directions. The exhaustive search ensures that the target word will not be missed.
+
+I recognised that the misclassification of certain letters could cause the algorithm to miss a word entirely, so I implemented a score-based system to address this. I decided to give points if the first and last letter are a match, for longer letter I have also added extra points for partial matches to the middle letters. This allows the algorithm to select the placement that is most likely to be correct. Position that extends outside the grid gets skipped to be efficient.
+
+If none of the placement reaches a high enough score then a default position of (0,0,0,0) is returned. While this approach may occasionally misplace words, I believe it is better than skipping them entirely especially since this approach attempts to counteract the possible classification errors.]
+
+## Performance
+
+My percentage correctness scores (to 1 decimal place) for the development data are as follows.
+
+High quality data:
+
+- Percentage Letters Correct: 98.7%
+- Percentage Words Correct: 100.0%
+
+Low quality data:
+
+- Percentage Letters Correct: 52.7%
+- Percentage Words Correct: 50.0%
+
+## Other information (Optional, Max 100 words)
+
+[I designed the system to be simple and easy to follow. PCA ensures the feature vectors are consistent, which helps the KNN classifier work reliably. I included a score-based word finder to handle cases where letters are misclassified, so the algorithm can still find the best possible match instead of skipping words entirely. The model stores all important parameters in a dictionary, making it easy to reuse for different puzzles. Overall, I focused on making the system clear, efficient, and robust to handle both high and low-quality data.]
